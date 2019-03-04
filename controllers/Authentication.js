@@ -1,0 +1,134 @@
+const UserModel = require("../models/Users")
+const bcrypt = require('bcrypt');
+const get = require('lodash/get');
+const jwt = require('jsonwebtoken');
+
+class Authentication {
+
+  constructor(req, res) {
+    this.req = req;
+    this.res = res;
+  }
+
+  generateSalt() {
+    const saltRound = 10;
+    return bcrypt.genSaltSync(saltRound)
+  }
+
+  generateHash(password, salt) {
+    return bcrypt.hashSync(password, salt)
+  }
+
+  register() {
+    const userInput = this.req.body;
+    if(!userInput) {
+      this.res.send('no request body')
+    }
+
+    const {title, firstName, lastName, userTypeId, userName, password, email} = userInput;
+
+    if(!firstName || !lastName) {
+      this.res.send('name is required')
+    }
+
+    let salt;
+    let hash;
+
+    if(password && userName){
+      salt = this.generateSalt();
+      hash = this.generateHash(password, salt);
+    } else {
+      salt = '';
+      hash = '';
+    }
+
+
+    let user = new UserModel({
+      title: title,
+      first_name: firstName,
+      last_name: lastName,
+      primary_user_type_id: userTypeId,
+      user_name: userName,
+      password: hash,
+      salt: salt,
+      email: email,
+      status: 1,
+    });
+
+    user.save((err, data) => {
+      if(err) {
+        this.res.send('error')
+      }
+
+      this.res.send('success')
+    })
+  }
+
+  login() {
+    const userInput = this.req.body;
+    if(!userInput) {
+      this.res.send('no request body')
+    }
+
+    const {userName, password} = userInput;
+
+    UserModel.find({user_name : userName}, 'user_name password salt', (err, data) => {
+      if(err) {
+        this.res.send('error')
+      }
+
+      const userData = get(data, 0, []);
+      const userExists = userData.user_name;
+      const dbHash = userData.password;
+
+      if(userExists) {
+        const isValidUser = bcrypt.compareSync(password, dbHash);
+
+        if(isValidUser) {
+          const token = jwt.sign({userName: userName}, 'huss', {expiresIn: 60});
+          this.res.send(token)
+        } else {
+          this.res.send("does not match");
+        }
+
+      } else {
+        this.res.send("user does not exits");
+      }
+    })
+
+  }
+
+  profile() {
+    const userParams = this.req.params;
+    if(!userParams) {
+      this.res.send('no request params');
+    }
+
+    const {userName} = userParams;
+
+    UserModel.find({user_name : userName}, 'user_name email first_name last_name title', (err, data) => {
+      if(err) {
+        this.res.send('error')
+      }
+
+      const userData = get(data, 0, []);
+      const userName = userData.userName;
+      const email = userData.email;
+      const firstName = userData.first_name;
+      const lastName = userData.last_name;
+      const title = userData.title;
+
+      this.res.json({
+        "title": title,
+        "firstName": firstName,
+        "lastName": lastName,
+        "userName": userName,
+        "email": email
+      });
+    })
+
+  }
+
+}
+
+module.exports = Authentication;
