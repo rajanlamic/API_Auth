@@ -7,10 +7,10 @@ let UserSchema = new Schema({
 		type: String,
 		required: true,
 		validate: {
-			validator: function(v) {
+			validator: function(v:any) {
 				return /rajan/.test(v);
 			},
-			message: (props) => `${props.value} is not a valid name!`
+			message: (props:any) => `${props.value} is not a valid name!`
 		}
 	},
 	last_name: { type: String, required: true },
