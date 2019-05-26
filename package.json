@@ -3,11 +3,23 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "tsc": "tsc",
     "start": "node ./bin/www",
-    "dev": "nodemon --inspect ./bin/www",
+    "dev_": "nodemon --inspect ./build/bin/www.js",
+    "dev": "ts-node-dev ./bin/www.ts",
+    "prod": "tsc && node ./build/bin/www.js",
     "test": "mocha tests/unit/**"
   },
   "dependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/debug": "^4.1.4",
+    "@types/express": "^4.16.1",
+    "@types/jest": "^24.0.13",
+    "@types/jsonwebtoken": "^8.3.2",
+    "@types/lodash": "^4.14.132",
+    "@types/mongoose": "^5.5.3",
+    "@types/morgan": "^1.7.35",
+    "@types/node": "^12.0.2",
     "bcrypt": "^3.0.4",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
@@ -18,12 +30,15 @@
     "mongoose": "^5.4.13",
     "morgan": "~1.9.0",
     "node-sass-middleware": "0.11.0",
-    "pug": "2.0.0-beta11"
+    "pug": "^2.0.3",
+    "typescript": "^3.4.5"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
     "chai": "^4.2.0",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "nodemon": "^1.18.10",
-    "standard": "^12.0.1"
+    "standard": "^12.0.1",
+    "ts-node-dev": "^1.0.0-pre.39"
   }
 }

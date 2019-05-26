@@ -1,5 +1,6 @@
 var createError = require('http-errors')
-var express = require('express')
+import express from 'express'
+// let express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
@@ -13,7 +14,7 @@ let db = mongoose.connection
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
-var indexRouter = require('./routes/index')
+var indexRouter = require('./routes')
 var usersRouter = require('./routes/users')
 
 var app = express()
@@ -43,7 +44,7 @@ app.use(function (req, res, next) {
 })
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err: any, req: any, res: any, next: any) {
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}

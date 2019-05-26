@@ -2,10 +2,15 @@ const UserModel = require('../models/Users');
 const bcrypt = require('bcrypt');
 const get = require('lodash/get');
 const jwt = require('jsonwebtoken');
-const CONFIG = require('../config/config');
+import CONFIG from "../config/config.json"
+
+// const CONFIG = require('../config/config');
 
 class Authentication {
-	constructor(req, res) {
+    req: any;
+    res: any;
+
+	constructor(req: any, res:any) {
 		this.req = req;
 		this.res = res;
 	}
@@ -15,7 +20,7 @@ class Authentication {
 		return bcrypt.genSaltSync(saltRound);
 	}
 
-	generateHash(password, salt) {
+	generateHash(password: string, salt:string) {
 		return bcrypt.hashSync(password, salt);
 	}
 
@@ -84,7 +89,7 @@ class Authentication {
 		const userInput = this.req.body;
 		const { userName, password } = userInput;
 
-		UserModel.find({ user_name: userName }, 'user_name password salt', (err, data) => {
+		UserModel.find({ user_name: userName }, 'user_name password salt', (err: any, data:any) => {
 			if (err) {
 				this.res.send('error');
 			}
@@ -112,7 +117,7 @@ class Authentication {
 		const userParams = this.req.params;
 		const { userName } = userParams;
 
-		UserModel.find({ user_name: userName }, 'user_name email first_name last_name title', (err, data) => {
+		UserModel.find({ user_name: userName }, 'user_name email first_name last_name title', (err: any, data: any) => {
 			if (err) {
 				this.res.send('error');
 			}

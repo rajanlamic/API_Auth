@@ -1,4 +1,6 @@
-const expect = require('chai').expect
+// const expect = require('chai').expect
+import chai from 'chai'
+const expect = chai.expect
 
 describe('Authentication', () => {
   it('should test', () => {
